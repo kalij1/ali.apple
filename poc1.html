@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Strings to API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        form {
+            max-width: 400px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Send Strings to API</h2>
+    <form id="dataForm">
+        <input type="text" id="param1" placeholder="Enter Param1" required>
+        <input type="text" id="param2" placeholder="Enter Param2" required>
+        <button type="submit">Send to API</button>
+    </form>
+
+    <div class="response" id="response"></div>
+
+    <script>
+        document.getElementById("dataForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const param1 = document.getElementById("param1").value;
+            const param2 = document.getElementById("param2").value;
+            
+            // Prepare the data to be sent
+            const data = {
+                param1: param1,
+                param2: param2
+            };
+
+            // Make the POST request
+            fetch('https://file-writer-ms-production.up.railway.app/LogString', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerHTML = 
+                    `<strong>Response:</strong> ${JSON.stringify(data)}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById("response").innerHTML = 
+                    `<strong>Error:</strong> ${error.message}`;
+            });
+        });
+    </script>
+
+</body>
+</html>
