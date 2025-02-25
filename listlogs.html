@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Viewer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: #1F1F1F;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        header h1 {
+            margin: 0;
+            color: #fff;
+        }
+
+        /* File List */
+        .file-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .file-list li {
+            background-color: #2C2C2C;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .file-list li:hover {
+            background-color: #444;
+        }
+
+        /* File Content */
+        .file-content {
+            background-color: #2C2C2C;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1F1F1F;
+            text-align: center;
+            padding: 10px;
+            margin-top: auto;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>File Viewer</h1>
+    </header>
+
+    <!-- File List -->
+    <h2>Available Files:</h2>
+    <ul class="file-list" id="fileList">
+        <!-- File names will be loaded here -->
+    </ul>
+
+    <!-- File Content -->
+    <h2>File Content:</h2>
+    <div class="file-content" id="fileContent">
+        <em>Select a file to view its content</em>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 File Viewer App. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Fetch list of file names from the API
+        function fetchFileList() {
+            fetch('https://file-writer-ms-production.up.railway.app/LogFiles')
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to fetch file list');
+                    }
+                })
+                .then(data => {
+                    const fileList = document.getElementById("fileList");
+                    fileList.innerHTML = '';
+
+                    if (data.files.length === 0) {
+                        fileList.innerHTML = '<li>No files found</li>';
+                    } else {
+                        data.files.forEach(fileName => {
+                            const listItem = document.createElement("li");
+                            listItem.innerText = fileName;
+                            listItem.addEventListener("click", () => fetchFileContent(fileName));
+                            fileList.appendChild(listItem);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById("fileList").innerHTML = '<li>Error loading files</li>';
+                });
+        }
+
+        // Fetch and display the content of a specific file
+        function fetchFileContent(fileName) {
+            fetch(`https://file-writer-ms-production.up.railway.app/LogFileContent/${fileName}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to fetch file content');
+                    }
+                })
+                .then(data => {
+                    document.getElementById("fileContent").innerText = data.content;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById("fileContent").innerText = 'Error loading file content';
+                });
+        }
+
+        // Load file list on page load
+        window.addEventListener("load", fetchFileList);
+    </script>
+
+</body>
+</html>
